@@ -2,16 +2,6 @@ Compile outcome: failure
 JAR inspection outcome: skipped
 
 Project verification passed: 12 Java files, all JSON/resources present, PNG dimensions valid.
-
-Welcome to Gradle 8.10.2!
-
-Here are the highlights of this release:
- - Support for Java 23
- - Faster configuration cache
- - Better configuration cache reports
-
-For more details see https://docs.gradle.org/8.10.2/release-notes.html
-
 Starting a Gradle Daemon (subsequent builds will be faster)
 
 > Configure project :
@@ -34,7 +24,7 @@ Note: Some messages have been simplified; recompile with -Xdiags:verbose to get 
 1 error
 
 > Task :compileJava FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1785625548904.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1785625644715.json
 
 FAILURE: Build failed with an exception.
 
@@ -289,5 +279,5 @@ Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Com
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
 
 
-BUILD FAILED in 58s
+BUILD FAILED in 19s
 2 actionable tasks: 2 executed
