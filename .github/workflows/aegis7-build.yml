@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-test:
@@ -61,6 +61,22 @@ jobs:
           jar tf "$JAR" | grep -F 'assets/aegis7/textures/entity/aegis7.png'
           cp "$JAR" ../aegis7-0.3.0.jar
           sha256sum ../aegis7-0.3.0.jar > ../aegis7-0.3.0.jar.sha256
+
+      - name: Publish verified JAR to isolated branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          cp aegis7-0.3.0.jar release/
+          cp aegis7-0.3.0.jar.sha256 release/
+          printf 'Build passed project validation, Java 21 compilation, remapping, and JAR-content inspection.\n' > release/BUILD_PASSED.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add release
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish verified Aegis-7 Fabric JAR'
+            git push origin HEAD:aegis7-build
+          fi
 
       - name: Upload paste-ready mod JAR
         uses: actions/upload-artifact@v4
