@@ -11,7 +11,7 @@ permissions:
 jobs:
   build-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - name: Check out isolated Aegis-7 build branch
         uses: actions/checkout@v4
@@ -64,9 +64,42 @@ jobs:
           jar tf "$JAR" | grep -F 'fabric.mod.json'
           jar tf "$JAR" | grep -F 'com/noah/aegis7/Aegis7Mod.class'
           jar tf "$JAR" | grep -F 'com/noah/aegis7/Aegis7Client.class'
+          jar tf "$JAR" | grep -F 'com/noah/aegis7/client/model/AegisModel.class'
+          jar tf "$JAR" | grep -F 'com/noah/aegis7/client/input/SteamDeckGamepadInput.class'
           jar tf "$JAR" | grep -F 'assets/aegis7/textures/entity/aegis7.png'
           cp "$JAR" ../aegis7-0.3.0.jar
           sha256sum ../aegis7-0.3.0.jar > ../aegis7-0.3.0.jar.sha256
+
+      - name: Headless Minecraft client startup smoke test
+        id: client_smoke
+        if: steps.compile.outcome == 'success' && steps.inspect.outcome == 'success'
+        continue-on-error: true
+        working-directory: Aegis7_Transforming_Robot_Mod
+        shell: bash
+        run: |
+          set +e
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb
+          timeout 180s xvfb-run -a gradle runClient --stacktrace --console=plain > ../aegis7-client-smoke.log 2>&1
+          STATUS=$?
+          set -e
+          tail -n 200 ../aegis7-client-smoke.log || true
+          LOG="run/logs/latest.log"
+          if [[ -f "$LOG" ]]; then
+            if grep -Eqi 'Could not execute entrypoint|Mixin apply failed|Minecraft has crashed|Exception in thread "Render thread"|java\.lang\.NoClassDefFoundError' "$LOG"; then
+              echo 'Fatal client startup signature found.'
+              exit 1
+            fi
+            if grep -Eq 'Reloading ResourceManager|Sound engine started|Created: [0-9]+x[0-9]+x[0-9]+ minecraft:textures/atlas' "$LOG"; then
+              echo 'Minecraft client reached resource initialization without a fatal mod crash.'
+              exit 0
+            fi
+          fi
+          if [[ "$STATUS" -eq 0 ]]; then
+            exit 0
+          fi
+          echo "Client did not reach a recognized startup marker; exit status $STATUS"
+          exit 1
 
       - name: Publish result to isolated branch
         if: always()
@@ -74,19 +107,24 @@ jobs:
         env:
           COMPILE_OUTCOME: ${{ steps.compile.outcome }}
           INSPECT_OUTCOME: ${{ steps.inspect.outcome }}
+          CLIENT_OUTCOME: ${{ steps.client_smoke.outcome }}
         run: |
           set -euo pipefail
           rm -rf release
           mkdir -p release
           printf '%s\n' "$GITHUB_RUN_ID" > release/RUN_ID.txt
-          if [[ "$COMPILE_OUTCOME" == "success" && "$INSPECT_OUTCOME" == "success" ]]; then
+          if [[ "$COMPILE_OUTCOME" == "success" && "$INSPECT_OUTCOME" == "success" && "$CLIENT_OUTCOME" == "success" ]]; then
             cp aegis7-0.3.0.jar release/
             cp aegis7-0.3.0.jar.sha256 release/
-            printf 'Build passed project validation, Java 21 compilation, remapping, and JAR-content inspection.\n' > release/BUILD_PASSED.txt
+            printf 'Build passed project validation, Java 21 compilation, Fabric remapping, JAR-content inspection, and a headless Minecraft client startup smoke test.\n' > release/BUILD_PASSED.txt
           else
-            printf 'Compile outcome: %s\nJAR inspection outcome: %s\n\n' "$COMPILE_OUTCOME" "$INSPECT_OUTCOME" > release/BUILD_FAILED.txt
+            printf 'Compile outcome: %s\nJAR inspection outcome: %s\nClient smoke-test outcome: %s\n\n' "$COMPILE_OUTCOME" "$INSPECT_OUTCOME" "$CLIENT_OUTCOME" > release/BUILD_FAILED.txt
             if [[ -f aegis7-build.log ]]; then
-              tail -n 400 aegis7-build.log >> release/BUILD_FAILED.txt
+              tail -n 250 aegis7-build.log >> release/BUILD_FAILED.txt
+            fi
+            if [[ -f aegis7-client-smoke.log ]]; then
+              printf '\n--- Client smoke log ---\n' >> release/BUILD_FAILED.txt
+              tail -n 250 aegis7-client-smoke.log >> release/BUILD_FAILED.txt
             fi
           fi
           git config user.name 'github-actions[bot]'
@@ -98,7 +136,7 @@ jobs:
           fi
 
       - name: Upload paste-ready mod JAR
-        if: steps.compile.outcome == 'success' && steps.inspect.outcome == 'success'
+        if: steps.compile.outcome == 'success' && steps.inspect.outcome == 'success' && steps.client_smoke.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: aegis7-0.3.0-fabric-1.21.1
@@ -109,6 +147,6 @@ jobs:
           retention-days: 7
 
       - name: Fail job when validation failed
-        if: steps.compile.outcome != 'success' || steps.inspect.outcome != 'success'
+        if: steps.compile.outcome != 'success' || steps.inspect.outcome != 'success' || steps.client_smoke.outcome != 'success'
         shell: bash
         run: exit 1
