@@ -1,12 +1,8 @@
 name: Build and test Aegis-7 Fabric mod
 
 on:
-  push:
-    branches: [main]
   issue_comment:
     types: [created]
-  schedule:
-    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -82,6 +78,7 @@ jobs:
           set -euo pipefail
           rm -rf release
           mkdir -p release
+          printf '%s\n' "$GITHUB_RUN_ID" > release/RUN_ID.txt
           if [[ "$COMPILE_OUTCOME" == "success" && "$INSPECT_OUTCOME" == "success" ]]; then
             cp aegis7-0.3.0.jar release/
             cp aegis7-0.3.0.jar.sha256 release/
