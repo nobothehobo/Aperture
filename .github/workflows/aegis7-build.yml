@@ -22,13 +22,14 @@ jobs:
         with:
           ref: aegis7-build
 
-      - name: Reconstruct source package
+      - name: Reconstruct and patch source package
         shell: bash
         run: |
           set -euo pipefail
           cat aegis7-source.tgz.b64.000 aegis7-source.tgz.b64.001 aegis7-source.tgz.b64.002 aegis7-source.tgz.b64.003 | base64 --decode > /tmp/aegis7-source.tgz
           echo "c793d2ebc9aea5b7cc500cafc69e94f81e5a11f24d9cd5d5fabd04dc09d8a11b  /tmp/aegis7-source.tgz" | sha256sum --check
           tar -xzf /tmp/aegis7-source.tgz
+          sed -i 's/SoundEvents\.ENTITY_GENERIC_EXPLODE,/SoundEvents.ENTITY_GENERIC_EXPLODE.value(),/' Aegis7_Transforming_Robot_Mod/src/main/java/com/noah/aegis7/state/RobotStateManager.java
 
       - name: Set up Java 21
         uses: actions/setup-java@v4
