@@ -1,8 +1,8 @@
 name: Build and test Aegis-7 Fabric mod
 
 on:
-  pull_request:
-    branches: [main]
+  schedule:
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -13,8 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - name: Check out temporary build branch
+      - name: Check out isolated Aegis-7 build branch
         uses: actions/checkout@v4
+        with:
+          ref: aegis7-build
 
       - name: Reconstruct source package
         shell: bash
