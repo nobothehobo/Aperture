@@ -37,18 +37,23 @@ jobs:
         with:
           gradle-version: '8.10.2'
 
-      - name: Validate project resources
+      - name: Validate and compile
+        id: compile
+        continue-on-error: true
         working-directory: Aegis7_Transforming_Robot_Mod
         shell: bash
         run: |
-          python -m pip install --quiet pillow
-          python verify-project.py
-
-      - name: Compile and remap Fabric mod
-        working-directory: Aegis7_Transforming_Robot_Mod
-        run: gradle clean build --stacktrace --warning-mode all
+          set -o pipefail
+          {
+            python -m pip install --quiet pillow
+            python verify-project.py
+            gradle clean build --stacktrace --warning-mode all
+          } 2>&1 | tee ../aegis7-build.log
 
       - name: Inspect built JAR
+        id: inspect
+        if: steps.compile.outcome == 'success'
+        continue-on-error: true
         working-directory: Aegis7_Transforming_Robot_Mod
         shell: bash
         run: |
@@ -62,23 +67,36 @@ jobs:
           cp "$JAR" ../aegis7-0.3.0.jar
           sha256sum ../aegis7-0.3.0.jar > ../aegis7-0.3.0.jar.sha256
 
-      - name: Publish verified JAR to isolated branch
+      - name: Publish result to isolated branch
+        if: always()
         shell: bash
+        env:
+          COMPILE_OUTCOME: ${{ steps.compile.outcome }}
+          INSPECT_OUTCOME: ${{ steps.inspect.outcome }}
         run: |
           set -euo pipefail
+          rm -rf release
           mkdir -p release
-          cp aegis7-0.3.0.jar release/
-          cp aegis7-0.3.0.jar.sha256 release/
-          printf 'Build passed project validation, Java 21 compilation, remapping, and JAR-content inspection.\n' > release/BUILD_PASSED.txt
+          if [[ "$COMPILE_OUTCOME" == "success" && "$INSPECT_OUTCOME" == "success" ]]; then
+            cp aegis7-0.3.0.jar release/
+            cp aegis7-0.3.0.jar.sha256 release/
+            printf 'Build passed project validation, Java 21 compilation, remapping, and JAR-content inspection.\n' > release/BUILD_PASSED.txt
+          else
+            printf 'Compile outcome: %s\nJAR inspection outcome: %s\n\n' "$COMPILE_OUTCOME" "$INSPECT_OUTCOME" > release/BUILD_FAILED.txt
+            if [[ -f aegis7-build.log ]]; then
+              tail -n 400 aegis7-build.log >> release/BUILD_FAILED.txt
+            fi
+          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add release
+          git add -A release
           if ! git diff --cached --quiet; then
-            git commit -m 'Publish verified Aegis-7 Fabric JAR'
+            git commit -m 'Publish Aegis-7 cloud build result'
             git push origin HEAD:aegis7-build
           fi
 
       - name: Upload paste-ready mod JAR
+        if: steps.compile.outcome == 'success' && steps.inspect.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: aegis7-0.3.0-fabric-1.21.1
@@ -87,3 +105,8 @@ jobs:
             aegis7-0.3.0.jar.sha256
           if-no-files-found: error
           retention-days: 7
+
+      - name: Fail job when validation failed
+        if: steps.compile.outcome != 'success' || steps.inspect.outcome != 'success'
+        shell: bash
+        run: exit 1
