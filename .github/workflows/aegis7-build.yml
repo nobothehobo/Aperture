@@ -3,6 +3,8 @@ name: Build and test Aegis-7 Fabric mod
 on:
   push:
     branches: [main]
+  issue_comment:
+    types: [created]
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
