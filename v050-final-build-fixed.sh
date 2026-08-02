@@ -20,6 +20,10 @@ if 'cp v050-PlayerEntityRendererMixin.java' not in source:
     source = source.replace(needle, insert, 1)
 source = source.replace('timeout 180s xvfb-run', 'timeout 55s xvfb-run')
 source = source.replace('timeout 120s gradle runServer', 'timeout 45s gradle runServer')
+source = source.replace(
+    "grep -F 'Aegis-7 systems online.'",
+    "grep -E 'Aegis-7( v0\\.5)? systems online\\.'"
+)
 Path('/tmp/v050-final-build-fixed.sh').write_text(source)
 PY
 
