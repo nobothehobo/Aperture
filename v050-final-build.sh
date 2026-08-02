@@ -1,5 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
+ROOT_DIR="$PWD"
+
+publish_failure() {
+  status=$?
+  if [[ $status -eq 0 ]]; then return; fi
+  set +e
+  cd "$ROOT_DIR"
+  rm -rf release-v050-diagnostic
+  mkdir -p release-v050-diagnostic
+  echo "${GITHUB_RUN_ID:-unknown}" > release-v050-diagnostic/RUN_ID.txt
+  printf 'Aegis-7 v0.5.0 build failed with exit code %s.\n' "$status" > release-v050-diagnostic/BUILD_FAILED.txt
+  for f in v050-build.log v050-client.log v050-server.log; do
+    if [[ -f "$f" ]]; then
+      printf '\n--- %s ---\n' "$f" >> release-v050-diagnostic/BUILD_FAILED.txt
+      tail -n 450 "$f" >> release-v050-diagnostic/BUILD_FAILED.txt
+    fi
+  done
+  git config user.name 'github-actions[bot]'
+  git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+  git add -A release-v050-diagnostic
+  git diff --cached --quiet || { git commit -m 'Publish Aegis-7 v0.5.0 failure diagnostics'; git push origin HEAD:aegis7-build; }
+  exit "$status"
+}
+trap publish_failure EXIT
 
 python3 -m pip install --quiet pillow
 cat aegis7-source.tgz.b64.000 aegis7-source.tgz.b64.001 aegis7-source.tgz.b64.002 aegis7-source.tgz.b64.003 | base64 --decode > /tmp/aegis7-source.tgz
@@ -80,3 +104,4 @@ git config user.name 'github-actions[bot]'
 git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 git add -A release-v050-final
 git diff --cached --quiet || { git commit -m 'Publish tested Aegis-7 v0.5.0 release'; git push origin HEAD:aegis7-build; }
+trap - EXIT
