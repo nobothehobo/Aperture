@@ -1,14 +1,81 @@
 ===== dev.isxander.controlify.api.bind.ControlifyBindApi =====
-Error: bad combination of options: -public -p
+Compiled from "ControlifyBindApi.java"
+public interface dev.isxander.controlify.api.bind.ControlifyBindApi {
+  public static dev.isxander.controlify.api.bind.ControlifyBindApi get();
+  public abstract dev.isxander.controlify.api.bind.InputBindingSupplier registerBinding(dev.isxander.controlify.api.bind.ControlifyBindApi$RegistryCallback);
+  public abstract dev.isxander.controlify.api.bind.InputBindingSupplier registerBinding(dev.isxander.controlify.api.bind.ControlifyBindApi$RegistryCallback, java.util.function.Predicate<dev.isxander.controlify.controller.ControllerEntity>);
+  public abstract dev.isxander.controlify.api.bind.InputBindingSupplier createSupplier(net.minecraft.class_2960);
+  public abstract java.util.List<dev.isxander.controlify.api.bind.InputBindingSupplier> getKeyCorrelation(net.minecraft.class_304);
+  public abstract void registerRadialIcon(net.minecraft.class_2960, dev.isxander.controlify.api.bind.RadialIcon);
+  public abstract void registerBindContext(dev.isxander.controlify.bindings.BindContext);
+  public abstract java.util.stream.Stream<net.minecraft.class_2960> getAllBindIds();
+}
 ===== dev.isxander.controlify.api.bind.InputBindingBuilder =====
-Error: bad combination of options: -public -p
+Compiled from "InputBindingBuilder.java"
+public interface dev.isxander.controlify.api.bind.InputBindingBuilder {
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder id(net.minecraft.class_2960);
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder id(java.lang.String, java.lang.String);
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder name(net.minecraft.class_2561);
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder description(net.minecraft.class_2561);
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder category(net.minecraft.class_2561);
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder defaultInput(dev.isxander.controlify.bindings.input.Input);
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder allowedContexts(dev.isxander.controlify.bindings.BindContext...);
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder radialCandidate(net.minecraft.class_2960);
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder addKeyCorrelation(net.minecraft.class_304);
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder keyEmulation(net.minecraft.class_304);
+  public abstract dev.isxander.controlify.api.bind.InputBindingBuilder keyEmulation(net.minecraft.class_304, java.util.function.Function<dev.isxander.controlify.controller.ControllerEntity, java.lang.Boolean>);
+}
 ===== dev.isxander.controlify.api.bind.InputBindingSupplier =====
-Error: bad combination of options: -public -p
+Compiled from "InputBindingSupplier.java"
+public interface dev.isxander.controlify.api.bind.InputBindingSupplier {
+  public static final com.mojang.serialization.Codec<dev.isxander.controlify.api.bind.InputBindingSupplier> CODEC;
+  public default dev.isxander.controlify.api.bind.InputBinding on(dev.isxander.controlify.controller.ControllerEntity);
+  public abstract dev.isxander.controlify.api.bind.InputBinding onOrNull(dev.isxander.controlify.controller.ControllerEntity);
+  public abstract net.minecraft.class_2960 bindId();
+  public abstract net.minecraft.class_2561 inputGlyph();
+  private static dev.isxander.controlify.api.bind.InputBindingSupplier lambda$static$0(net.minecraft.class_2960);
+  private java.lang.String lambda$on$0(dev.isxander.controlify.controller.ControllerEntity);
+  static {};
+}
 ===== dev.isxander.controlify.api.entrypoint.ControlifyEntrypoint =====
-Error: bad combination of options: -public -p
+Compiled from "ControlifyEntrypoint.java"
+public interface dev.isxander.controlify.api.entrypoint.ControlifyEntrypoint {
+  public abstract void onControllersDiscovered(dev.isxander.controlify.api.ControlifyApi);
+  public abstract void onControlifyInit(dev.isxander.controlify.api.entrypoint.InitContext);
+  public abstract void onControlifyPreInit(dev.isxander.controlify.api.entrypoint.PreInitContext);
+}
 ===== dev.isxander.controlify.bindings.defaults.GamepadBinds =====
-Error: bad combination of options: -public -p
+Error: class not found: dev.isxander.controlify.bindings.defaults.GamepadBinds
 ===== dev.isxander.controlify.bindings.InputBinding =====
-Error: bad combination of options: -public -p
+Error: class not found: dev.isxander.controlify.bindings.InputBinding
 ===== dev.isxander.controlify.bindings.BindContext =====
-Error: bad combination of options: -public -p
+Compiled from "BindContext.java"
+public final class dev.isxander.controlify.bindings.BindContext extends java.lang.Record {
+  private final net.minecraft.class_2960 id;
+  private final java.util.function.Function<net.minecraft.class_310, java.lang.Boolean> isApplicable;
+  public static final java.util.Map<net.minecraft.class_2960, dev.isxander.controlify.bindings.BindContext> CONTEXTS;
+  public static final dev.isxander.controlify.bindings.BindContext UNKNOWN;
+  public static final dev.isxander.controlify.bindings.BindContext IN_GAME;
+  public static final dev.isxander.controlify.bindings.BindContext ANY_SCREEN;
+  public static final dev.isxander.controlify.bindings.BindContext REGULAR_SCREEN;
+  public static final dev.isxander.controlify.bindings.BindContext CONTAINER;
+  public static final dev.isxander.controlify.bindings.BindContext V_MOUSE_CURSOR;
+  public static final dev.isxander.controlify.bindings.BindContext V_MOUSE_COMPAT;
+  public static final dev.isxander.controlify.bindings.BindContext RADIAL_MENU;
+  public dev.isxander.controlify.bindings.BindContext(net.minecraft.class_2960, java.util.function.Function<net.minecraft.class_310, java.lang.Boolean>);
+  private static dev.isxander.controlify.bindings.BindContext register(java.lang.String, java.util.function.Function<net.minecraft.class_310, java.lang.Boolean>);
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public net.minecraft.class_2960 id();
+  public java.util.function.Function<net.minecraft.class_310, java.lang.Boolean> isApplicable();
+  private static java.lang.Boolean lambda$static$7(net.minecraft.class_310);
+  private static java.lang.Boolean lambda$static$6(net.minecraft.class_310);
+  private static java.lang.Boolean lambda$static$5(net.minecraft.class_310);
+  private static java.lang.Boolean lambda$static$4(net.minecraft.class_310);
+  private static java.lang.Boolean lambda$static$3(net.minecraft.class_310);
+  private static java.lang.Boolean lambda$static$2(net.minecraft.class_310);
+  private static java.lang.Boolean lambda$static$1(net.minecraft.class_310);
+  private static java.lang.Boolean lambda$static$0(net.minecraft.class_310);
+  static {};
+}
