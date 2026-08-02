@@ -1,0 +1,54 @@
+name: Export Aegis-7 v0.5.0 source
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  export-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: aegis7-build
+      - name: Reconstruct complete v0.5.0 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow
+          cat aegis7-source.tgz.b64.000 aegis7-source.tgz.b64.001 aegis7-source.tgz.b64.002 aegis7-source.tgz.b64.003 | base64 --decode > /tmp/source.tgz
+          echo 'c793d2ebc9aea5b7cc500cafc69e94f81e5a11f24d9cd5d5fabd04dc09d8a11b  /tmp/source.tgz' | sha256sum -c
+          rm -rf Aegis7_Transforming_Robot_Mod
+          tar -xzf /tmp/source.tgz
+          cat v050-patch.b64.000 v050-patch.b64.001 v050-patch.b64.002 v050-patch.b64.003 | base64 --decode > /tmp/patch.tgz
+          echo '6435bd8a89bbc974ec16318a8a8b95db8d332849b1ea2e8aa9a7682deeee0c16  /tmp/patch.tgz' | sha256sum -c
+          tar -xzf /tmp/patch.tgz -C Aegis7_Transforming_Robot_Mod
+          rm -f Aegis7_Transforming_Robot_Mod/src/client/java/com/noah/aegis7/client/input/SteamDeckGamepadInput.java
+          python3 v050-generate-textures.py
+          cp v050-PlayerEntityRendererMixin.java Aegis7_Transforming_Robot_Mod/src/client/java/com/noah/aegis7/mixin/client/PlayerEntityRendererMixin.java
+          tar -czf Aegis7-v0.5.0-complete-source.tgz Aegis7_Transforming_Robot_Mod
+          sha256sum Aegis7-v0.5.0-complete-source.tgz > Aegis7-v0.5.0-complete-source.tgz.sha256
+      - name: Publish run id
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf source-export
+          mkdir source-export
+          echo "$GITHUB_RUN_ID" > source-export/RUN_ID.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add source-export/RUN_ID.txt
+          git diff --cached --quiet || { git commit -m 'Publish Aegis-7 source export run'; git push origin HEAD:aegis7-build; }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Aegis7-v0.5.0-complete-source
+          path: |
+            Aegis7-v0.5.0-complete-source.tgz
+            Aegis7-v0.5.0-complete-source.tgz.sha256
+          if-no-files-found: error
+          retention-days: 1
