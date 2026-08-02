@@ -34,7 +34,7 @@ jobs:
             dev.isxander.controlify.bindings.InputBinding \
             dev.isxander.controlify.bindings.BindContext; do
             echo "===== $cls =====" >> controlify-api-inspect/javap.txt
-            javap -classpath /tmp/controlify.jar -public -p "$cls" >> controlify-api-inspect/javap.txt 2>&1 || true
+            javap -classpath /tmp/controlify.jar -p "$cls" >> controlify-api-inspect/javap.txt 2>&1 || true
           done
           unzip -p /tmp/controlify.jar fabric.mod.json > controlify-api-inspect/fabric.mod.json
           echo "$GITHUB_RUN_ID" > controlify-api-inspect/RUN_ID.txt
