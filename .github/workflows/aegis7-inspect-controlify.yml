@@ -1,0 +1,44 @@
+name: Inspect Controlify 1.21.1 API
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: aegis7-build
+      - name: Download and inspect Controlify
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://cdn.modrinth.com/data/DOUdJVEm/versions/y9bu5RxH/controlify-3.0.1%2Blts%2B1.21.1-fabric.jar'
+          curl -L --fail --retry 3 -o /tmp/controlify.jar "$URL"
+          rm -rf controlify-api-inspect
+          mkdir controlify-api-inspect
+          jar tf /tmp/controlify.jar | grep -E 'api/(bind|entrypoint)|bindings/defaults|BindContext|InputBinding' > controlify-api-inspect/classes.txt || true
+          for cls in \
+            dev.isxander.controlify.api.bind.ControlifyBindApi \
+            dev.isxander.controlify.api.bind.InputBindingBuilder \
+            dev.isxander.controlify.api.bind.InputBindingSupplier \
+            dev.isxander.controlify.api.entrypoint.ControlifyEntrypoint \
+            dev.isxander.controlify.bindings.defaults.GamepadBinds \
+            dev.isxander.controlify.bindings.InputBinding \
+            dev.isxander.controlify.bindings.BindContext; do
+            echo "===== $cls =====" >> controlify-api-inspect/javap.txt
+            javap -classpath /tmp/controlify.jar -public -p "$cls" >> controlify-api-inspect/javap.txt 2>&1 || true
+          done
+          unzip -p /tmp/controlify.jar fabric.mod.json > controlify-api-inspect/fabric.mod.json
+          echo "$GITHUB_RUN_ID" > controlify-api-inspect/RUN_ID.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A controlify-api-inspect
+          git diff --cached --quiet || { git commit -m 'Publish Controlify 1.21.1 API inspection'; git push origin HEAD:aegis7-build; }
