@@ -1,0 +1,38 @@
+name: Run Aegis-7 v0.5.0 release script
+
+on:
+  issue_comment:
+    types: [created]
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.event_name != 'issue_comment' || contains(github.event.comment.body, 'run-aegis-v050-script')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: aegis7-build
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Build and test complete release
+        run: bash v050-final-build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Aegis-7-Fabric-1.21.1-v0.5.0-tested
+          path: |
+            Aegis-7-Fabric-1.21.1-v0.5.0.jar
+            Aegis-7-Fabric-1.21.1-v0.5.0.jar.sha256
+          if-no-files-found: error
+          retention-days: 7
