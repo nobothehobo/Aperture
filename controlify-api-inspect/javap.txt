@@ -37,6 +37,49 @@ public interface dev.isxander.controlify.api.bind.InputBindingSupplier {
   private java.lang.String lambda$on$0(dev.isxander.controlify.controller.ControllerEntity);
   static {};
 }
+===== dev.isxander.controlify.api.bind.InputBinding =====
+Compiled from "InputBinding.java"
+public interface dev.isxander.controlify.api.bind.InputBinding {
+  public static final net.minecraft.class_2960 ANALOGUE_NOW;
+  public static final net.minecraft.class_2960 ANALOGUE_PREV;
+  public static final net.minecraft.class_2960 DIGITAL_NOW;
+  public static final net.minecraft.class_2960 DIGITAL_PREV;
+  public static final net.minecraft.class_2960 JUST_PRESSED;
+  public static final net.minecraft.class_2960 JUST_RELEASED;
+  public static final net.minecraft.class_2960 JUST_TAPPED;
+  public static final net.minecraft.class_2960 GUI_PRESSED;
+  public static final net.minecraft.class_2960 KEY_EMULATION;
+  public abstract net.minecraft.class_2960 id();
+  public abstract net.minecraft.class_2561 name();
+  public abstract net.minecraft.class_2561 description();
+  public abstract net.minecraft.class_2561 category();
+  public abstract net.minecraft.class_2561 inputGlyph();
+  public default net.minecraft.class_2561 inputIcon();
+  public abstract dev.isxander.controlify.bindings.StateAccess createStateAccess(int);
+  public abstract dev.isxander.controlify.bindings.StateAccess createStateAccess(int, java.util.function.Consumer<dev.isxander.controlify.bindings.StateAccess>);
+  public abstract void returnStateAccess(dev.isxander.controlify.bindings.StateAccess);
+  public abstract void pushState(dev.isxander.controlify.controller.input.ControllerStateView);
+  public abstract void fakePress();
+  public abstract void setBoundInput(dev.isxander.controlify.bindings.input.Input);
+  public abstract dev.isxander.controlify.bindings.input.Input boundInput();
+  public abstract dev.isxander.controlify.bindings.input.Input defaultInput();
+  public default boolean isUnbound();
+  public abstract java.util.Set<dev.isxander.controlify.bindings.BindContext> contexts();
+  public abstract java.util.Optional<net.minecraft.class_2960> radialIcon();
+  public abstract float analogueNow();
+  public abstract float analoguePrev();
+  public abstract boolean digitalNow();
+  public abstract boolean digitalPrev();
+  public abstract boolean justPressed();
+  public abstract boolean justReleased();
+  public abstract boolean justTapped();
+  public abstract dev.isxander.controlify.bindings.output.GuiPressOutput guiPressed();
+  public abstract <T extends dev.isxander.controlify.bindings.output.DigitalOutput> T getDigitalOutput(net.minecraft.class_2960);
+  public abstract <T extends dev.isxander.controlify.bindings.output.DigitalOutput> T addDigitalOutput(net.minecraft.class_2960, T);
+  public abstract <T extends dev.isxander.controlify.bindings.output.AnalogueOutput> T getAnalogueOutput(net.minecraft.class_2960);
+  public abstract <T extends dev.isxander.controlify.bindings.output.AnalogueOutput> T addAnalogueOutput(net.minecraft.class_2960, T);
+  static {};
+}
 ===== dev.isxander.controlify.api.entrypoint.ControlifyEntrypoint =====
 Compiled from "ControlifyEntrypoint.java"
 public interface dev.isxander.controlify.api.entrypoint.ControlifyEntrypoint {
@@ -44,10 +87,17 @@ public interface dev.isxander.controlify.api.entrypoint.ControlifyEntrypoint {
   public abstract void onControlifyInit(dev.isxander.controlify.api.entrypoint.InitContext);
   public abstract void onControlifyPreInit(dev.isxander.controlify.api.entrypoint.PreInitContext);
 }
-===== dev.isxander.controlify.bindings.defaults.GamepadBinds =====
-Error: class not found: dev.isxander.controlify.bindings.defaults.GamepadBinds
-===== dev.isxander.controlify.bindings.InputBinding =====
-Error: class not found: dev.isxander.controlify.bindings.InputBinding
+===== dev.isxander.controlify.api.entrypoint.PreInitContext =====
+Compiled from "PreInitContext.java"
+public interface dev.isxander.controlify.api.entrypoint.PreInitContext {
+  public abstract dev.isxander.controlify.api.bind.ControlifyBindApi bindings();
+  public abstract dev.isxander.controlify.api.guide.GuideDomainRegistries guideRegistries();
+}
+===== dev.isxander.controlify.api.entrypoint.InitContext =====
+Compiled from "InitContext.java"
+public interface dev.isxander.controlify.api.entrypoint.InitContext {
+  public abstract dev.isxander.controlify.api.ControlifyApi controlify();
+}
 ===== dev.isxander.controlify.bindings.BindContext =====
 Compiled from "BindContext.java"
 public final class dev.isxander.controlify.bindings.BindContext extends java.lang.Record {
@@ -77,5 +127,15 @@ public final class dev.isxander.controlify.bindings.BindContext extends java.lan
   private static java.lang.Boolean lambda$static$2(net.minecraft.class_310);
   private static java.lang.Boolean lambda$static$1(net.minecraft.class_310);
   private static java.lang.Boolean lambda$static$0(net.minecraft.class_310);
+  static {};
+}
+===== dev.isxander.controlify.bindings.input.Input =====
+Compiled from "Input.java"
+public interface dev.isxander.controlify.bindings.input.Input {
+  public static final com.mojang.serialization.MapCodec<dev.isxander.controlify.bindings.input.Input> MAP_CODEC;
+  public static final com.mojang.serialization.Codec<dev.isxander.controlify.bindings.input.Input> CODEC;
+  public abstract float state(dev.isxander.controlify.controller.input.ControllerStateView);
+  public abstract java.util.List<net.minecraft.class_2960> getRelevantInputs();
+  public abstract dev.isxander.controlify.bindings.input.InputType<?> type();
   static {};
 }

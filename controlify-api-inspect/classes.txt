@@ -22,3 +22,10 @@ dev/isxander/controlify/bindings/defaults/DefaultBindProvider.class
 dev/isxander/controlify/bindings/defaults/LayeredDefaultBindProvider$Layer.class
 dev/isxander/controlify/bindings/defaults/LayeredDefaultBindProvider.class
 dev/isxander/controlify/bindings/defaults/MapBackedDefaultBindProvider.class
+dev/isxander/controlify/bindings/input/
+dev/isxander/controlify/bindings/input/AxisInput.class
+dev/isxander/controlify/bindings/input/ButtonInput.class
+dev/isxander/controlify/bindings/input/EmptyInput.class
+dev/isxander/controlify/bindings/input/HatInput.class
+dev/isxander/controlify/bindings/input/Input.class
+dev/isxander/controlify/bindings/input/InputType.class
