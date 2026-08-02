@@ -1,1 +1,1 @@
-Trigger Aegis-7 v0.6 Controlify API inspection retry.
+Trigger Aegis-7 v0.6 Controlify JAR export.
