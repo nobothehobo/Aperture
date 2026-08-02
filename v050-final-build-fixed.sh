@@ -11,7 +11,8 @@ insert = needle + (
     "Aegis7_Transforming_Robot_Mod/src/client/java/com/noah/aegis7/mixin/client/PlayerEntityRendererMixin.java\n"
     "grep -q 'renderer.getModel().setVisible' "
     "Aegis7_Transforming_Robot_Mod/src/client/java/com/noah/aegis7/mixin/client/PlayerEntityRendererMixin.java\n"
-    "if grep -q '@Shadow' Aegis7_Transforming_Robot_Mod/src/client/java/com/noah/aegis7/mixin/client/PlayerEntityRendererMixin.java; then exit 1; fi\n"
+    "if grep -Eq '^[[:space:]]*@Shadow|import org\\.spongepowered\\.asm\\.mixin\\.Shadow' "
+    "Aegis7_Transforming_Robot_Mod/src/client/java/com/noah/aegis7/mixin/client/PlayerEntityRendererMixin.java; then exit 1; fi\n"
 )
 if needle not in source:
     raise SystemExit('Could not locate Aegis texture-generation insertion point')
