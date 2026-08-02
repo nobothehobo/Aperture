@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "id": "controlify",
+  "version": "3.0.1+lts+1.21.1-fabric",
+  "name": "Controlify",
+  "description": "The most advanced controller mod for Minecraft.",
+  "authors": [
+    "isXander"
+  ],
+  "contact": {
+    "homepage": "https://isxander.dev",
+    "issues": "https://github.com/isXander/Controlify/issues",
+    "sources": "https://github.com/isXander/Controlify"
+  },
+  "license": "LGPL-3.0-or-later",
+  "environment": "*",
+  "entrypoints": {
+    "modmenu": [
+      "dev.isxander.controlify.config.ModMenuIntegration"
+    ],
+    "main": [
+      "dev.isxander.controlify.ControlifyBootstrap"
+    ],
+    "client": [
+      "dev.isxander.controlify.ControlifyBootstrap"
+    ],
+    "server": [
+      "dev.isxander.controlify.ControlifyBootstrap"
+    ]
+  },
+  "icon": "icon.png",
+  "depends": {
+    "fabricloader": "\u003e\u003d0.18.0",
+    "minecraft": "~1.21 \u003c1.21.2",
+    "java": "\u003e\u003d21",
+    "yet_another_config_lib_v3": "\u003e\u003d3.8.0"
+  },
+  "suggests": {
+    "immediatelyfast": "*"
+  },
+  "breaks": {
+    "midnightcontrols": "*",
+    "controllable": "*",
+    "zoomify": "\u003c\u003d2.13.4",
+    "do_a_barrel_roll": "\u003c\u003d3.5.8"
+  },
+  "custom": {
+    "rrls": {
+      "force_load": [
+        "controlify:default_config",
+        "controlify:controller_type",
+        "controlify:default_binds"
+      ]
+    }
+  },
+  "accessWidener": "controlify.ct",
+  "mixins": [
+    {
+      "config": "controlify.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.iris.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.reeses-sodium-options.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.rrls.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.simple-voice-chat.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.sodium.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-compat.yacl.mixins.json",
+      "environment": "*"
+    },
+    {
+      "config": "controlify-platform.fabric.mixins.json",
+      "environment": "*"
+    }
+  ],
+  "jars": [
+    {
+      "file": "META-INF/jars/hid4java-0.8.0.jar"
+    },
+    {
+      "file": "META-INF/jars/libsdl4j-3.2.18.release-3.2.18-79.jar"
+    },
+    {
+      "file": "META-INF/jars/mixinextras-fabric-0.5.0-beta.4.jar"
+    },
+    {
+      "file": "META-INF/jars/steamdeck4j-1.1.7.jar"
+    },
+    {
+      "file": "META-INF/jars/yet-another-config-lib-3.8.0+1.21.1-fabric.jar"
+    }
+  ]
+}

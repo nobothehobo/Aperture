@@ -1,0 +1,14 @@
+===== dev.isxander.controlify.api.bind.ControlifyBindApi =====
+Error: bad combination of options: -public -p
+===== dev.isxander.controlify.api.bind.InputBindingBuilder =====
+Error: bad combination of options: -public -p
+===== dev.isxander.controlify.api.bind.InputBindingSupplier =====
+Error: bad combination of options: -public -p
+===== dev.isxander.controlify.api.entrypoint.ControlifyEntrypoint =====
+Error: bad combination of options: -public -p
+===== dev.isxander.controlify.bindings.defaults.GamepadBinds =====
+Error: bad combination of options: -public -p
+===== dev.isxander.controlify.bindings.InputBinding =====
+Error: bad combination of options: -public -p
+===== dev.isxander.controlify.bindings.BindContext =====
+Error: bad combination of options: -public -p
