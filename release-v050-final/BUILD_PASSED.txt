@@ -1,0 +1,1 @@
+Aegis-7 v0.5.0 passed source/resource validation, Java 21 and Fabric compilation/remapping, production-JAR inspection, client resource startup, and dedicated-server startup. Direct Steam Deck polling is absent.
