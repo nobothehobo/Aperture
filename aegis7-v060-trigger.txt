@@ -1,1 +1,1 @@
-Trigger Aegis-7 source export and v0.6 controller build.
+Trigger Aegis-7 v0.6 controller API inspection and build.
