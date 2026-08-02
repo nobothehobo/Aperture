@@ -1,0 +1,1 @@
+Aegis-7 v0.4.0 passed source/resource validation, Java 21 compilation, Fabric production remapping, remapped-mixin inspection, client resource loading, and dedicated-server startup.
