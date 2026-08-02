@@ -21,24 +21,32 @@ jobs:
         run: |
           set -euo pipefail
           URL='https://cdn.modrinth.com/data/DOUdJVEm/versions/y9bu5RxH/controlify-3.0.1%2Blts%2B1.21.1-fabric.jar'
-          curl -L --fail --retry 3 -o /tmp/controlify.jar "$URL"
+          curl -L --fail --retry 3 -o controlify-3.0.1-lts-1.21.1-fabric.jar "$URL"
           rm -rf controlify-api-inspect
           mkdir controlify-api-inspect
-          jar tf /tmp/controlify.jar | grep -E 'api/(bind|entrypoint)|bindings/defaults|BindContext|InputBinding' > controlify-api-inspect/classes.txt || true
+          jar tf controlify-3.0.1-lts-1.21.1-fabric.jar > controlify-api-inspect/all-classes.txt
+          jar tf controlify-3.0.1-lts-1.21.1-fabric.jar | grep -E 'api/(bind|entrypoint)|bindings/defaults|bindings/input|BindContext|InputBinding' > controlify-api-inspect/classes.txt || true
           for cls in \
             dev.isxander.controlify.api.bind.ControlifyBindApi \
             dev.isxander.controlify.api.bind.InputBindingBuilder \
             dev.isxander.controlify.api.bind.InputBindingSupplier \
+            dev.isxander.controlify.api.bind.InputBinding \
             dev.isxander.controlify.api.entrypoint.ControlifyEntrypoint \
-            dev.isxander.controlify.bindings.defaults.GamepadBinds \
-            dev.isxander.controlify.bindings.InputBinding \
-            dev.isxander.controlify.bindings.BindContext; do
+            dev.isxander.controlify.api.entrypoint.PreInitContext \
+            dev.isxander.controlify.api.entrypoint.InitContext \
+            dev.isxander.controlify.bindings.BindContext \
+            dev.isxander.controlify.bindings.input.Input; do
             echo "===== $cls =====" >> controlify-api-inspect/javap.txt
-            javap -classpath /tmp/controlify.jar -p "$cls" >> controlify-api-inspect/javap.txt 2>&1 || true
+            javap -classpath controlify-3.0.1-lts-1.21.1-fabric.jar -p "$cls" >> controlify-api-inspect/javap.txt 2>&1 || true
           done
-          unzip -p /tmp/controlify.jar fabric.mod.json > controlify-api-inspect/fabric.mod.json
+          unzip -p controlify-3.0.1-lts-1.21.1-fabric.jar fabric.mod.json > controlify-api-inspect/fabric.mod.json
           echo "$GITHUB_RUN_ID" > controlify-api-inspect/RUN_ID.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A controlify-api-inspect
           git diff --cached --quiet || { git commit -m 'Publish Controlify 1.21.1 API inspection'; git push origin HEAD:aegis7-build; }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: controlify-3.0.1-lts-1.21.1-fabric
+          path: controlify-3.0.1-lts-1.21.1-fabric.jar
+          retention-days: 1
